@@ -1,0 +1,34 @@
+Model: "simple_sigmoid_model"
+__________________________________________________________________________________________________
+ Layer (type)                Output Shape                 Param #   Connected to                  
+==================================================================================================
+ Age (InputLayer)            [(None, 1)]                  0         []                            
+                                                                                                  
+ Embarked (InputLayer)       [(None, 1)]                  0         []                            
+                                                                                                  
+ Fare (InputLayer)           [(None, 1)]                  0         []                            
+                                                                                                  
+ Parch (InputLayer)          [(None, 1)]                  0         []                            
+                                                                                                  
+ Pclass (InputLayer)         [(None, 1)]                  0         []                            
+                                                                                                  
+ Sex (InputLayer)            [(None, 1)]                  0         []                            
+                                                                                                  
+ SibSp (InputLayer)          [(None, 1)]                  0         []                            
+                                                                                                  
+ preprocessing_pipeline (Fu  (None, 16)                   9         ['Age[0][0]',                 
+ nctional)                                                           'Embarked[0][0]',            
+                                                                     'Fare[0][0]',                
+                                                                     'Parch[0][0]',               
+                                                                     'Pclass[0][0]',              
+                                                                     'Sex[0][0]',                 
+                                                                     'SibSp[0][0]']               
+                                                                                                  
+ sequential (Sequential)     (None, 1)                    17        ['preprocessing_pipeline[0][0]
+                                                                    ']                            
+                                                                                                  
+==================================================================================================
+Total params: 26 (108.00 Byte)
+Trainable params: 17 (68.00 Byte)
+Non-trainable params: 9 (40.00 Byte)
+__________________________________________________________________________________________________

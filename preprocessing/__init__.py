@@ -1,1 +1,1 @@
-from .preprocess import preprocess_model, clean_data
+from .preprocess import preprocess_model

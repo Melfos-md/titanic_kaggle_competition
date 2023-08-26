@@ -19,12 +19,11 @@ from typing import Tuple, List, Dict
 # Argument:
 # - col: dict, {column_name:[]}
 # all columns: ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked']
-# exclude: PassengerId Name Cabin
-def load_and_prepare_data(excluded_features:List[str]=[], nrows:int=None) -> Tuple[pd.DataFrame, pd.DataFrame]:
-    usecols = ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked']
-    usecols = [col for col in usecols if col not in excluded_features]
+def load_and_prepare_data(nrows=None) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    usecols = ['Survived', 'Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Fare', 'Embarked']
     titanic_features = pd.read_csv('data/train.csv', usecols=usecols, nrows=nrows)
     titanic_labels = titanic_features.pop('Survived')
+    titanic_features['Embarked'].fillna("Missing", inplace=True)  
     titanic_features['Pclass'] = titanic_features['Pclass'].astype(str)
     return titanic_features, titanic_labels
 
@@ -81,7 +80,6 @@ def preprocess_categorical_features(titanic_features: pd.DataFrame, inputs: Dict
     for name, input in inputs.items():
         if input.dtype != tf.float32:
             unique_values = np.unique(titanic_features[name].astype(str).fillna("Missing"))
-            print(unique_values)
             lookup = layers.StringLookup(vocabulary=unique_values)
             one_hot = layers.CategoryEncoding(num_tokens=lookup.vocabulary_size())
             x = lookup(input)
@@ -93,14 +91,16 @@ def preprocess_categorical_features(titanic_features: pd.DataFrame, inputs: Dict
 # Return inputs, preprocess_pipeline
 # - inputs: dict of symbolic tf.keras.Input objects matching the names and data-types of the columns
 # - preprocess_pipeline: keras model, see dot format in README.md
-# Use example:
+# To generate dot format of preprocess_pipeline model:
 # ```
-# inputs, titanic_preprocessing = preprocess_model()
-# features_dict = {name:values[:1] for name, values in titanic_features_dict.items()}
-# titanic_preprocessing(features_dict)
+# from preprocessing import preprocess_model
+# import tensorflow as tf
+# 
+# _,titanic_preprocessing, _, _ = preprocess_model()
+# tf.keras.utils.plot_model(model=titanic_preprocessing, to_file='preprocessing_pipeline.png', rankdir="LR", dpi=300, show_shapes=True)
 # ```
 def preprocess_model():
-    titanic_features, _ = load_and_prepare_data()
+    titanic_features, titanic_labels = load_and_prepare_data()
     inputs = instantiate_tensors(titanic_features)
 
     # concatenate tensor graph in a list
@@ -108,4 +108,4 @@ def preprocess_model():
 
     preprocessed_inputs_cat = layers.Concatenate()(preprocessed_inputs)
     preprocess_pipeline = tf.keras.Model(inputs, preprocessed_inputs_cat, name='preprocessing_pipeline')
-    return inputs, preprocess_pipeline
+    return inputs, preprocess_pipeline, titanic_features, titanic_labels
