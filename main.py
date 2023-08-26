@@ -43,8 +43,8 @@ results = model.evaluate(titanic_test_features_dict, y_test)
 
 print("metrics: ", model.metrics_names)
 print("results: ", results)
+
+
+#%%
+#model.save('doc/model_1.0/model_1.0.tf')
 # %%
-#metrics:  ['loss', 'accuracy', 'precision', 'recall']
-#results:  [0.45686885714530945, 0.7765362858772278, 0.7428571581840515, 0.7027027010917664]
-#Epoch 50/50
-#17/17 [==============================] - 0s 5ms/step - loss: 0.4676 - accuracy: 0.7921 - precision: 0.7584 - recall: 0.6650 - val_loss: 0.4277 - val_accuracy: 0.8202 - val_precision: 0.7797 - val_recall: 0.7077
