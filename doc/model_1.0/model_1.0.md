@@ -30,6 +30,17 @@ Missing value handling and feature exclusion are done with pandas before passing
 
 Simple logistic regression
 
-Model: "simple_sigmoid_model"
-
 ![model_1.0](simple_sigmoid_model.png)
+
+
+Hyperparameters:
+- learning_rate: 0.01
+- epoch: 50
+
+
+**Results**
+
+|          | Train  | Dev    | Test   |
+|----------|--------|--------|--------|
+| Loss     | 0.4676 | 0.4277 | 0.4676 |
+| Accuracy | 0.7921 | 0.8202 | 0.7765 |
