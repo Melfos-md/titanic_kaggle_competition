@@ -25,3 +25,6 @@ submission_df = pd.DataFrame({
     'PassengerId': passenger_id,
     'Survived': predicted_classes
 })
+# %%
+submission_df.to_csv('doc/model_1.0/submission.csv',index=False)
+# %%
