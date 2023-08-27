@@ -19,22 +19,13 @@ from typing import Tuple, List, Dict
 # Argument:
 # - col: dict, {column_name:[]}
 # all columns: ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked']
-def load_and_prepare_data(nrows=None) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def load_and_prepare_data():
     usecols = ['Survived', 'Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Fare', 'Embarked']
-    titanic_features = pd.read_csv('data/train.csv', usecols=usecols, nrows=nrows)
-    titanic_labels = titanic_features.pop('Survived')
+    titanic_features = pd.read_csv('data/train.csv', usecols=usecols)
     titanic_features['Embarked'].fillna("Missing", inplace=True)  
     titanic_features['Pclass'] = titanic_features['Pclass'].astype(str)
+    titanic_labels = titanic_features.pop('Survived')
     return titanic_features, titanic_labels
-
-# Split data 60-20-20
-def split_data(titanic_features: pd.DataFrame, titanic_labels: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.Series, pd.Series, pd.Series]:
-    from sklearn.model_selection import train_test_split
-    X_train, X_test, y_train, y_test = train_test_split(titanic_features,titanic_labels, test_size=0.2, random_state=42)
-    X_train, X_dev, y_train, y_dev = train_test_split(X_train, y_train, test_size=0.25, random_state=42)
-
-    return X_train, X_dev, X_test, y_train, y_dev, y_test
-
 
 # Instantiate keras tensors for each column.
 # Return dictionnary {name: KeraTensor} where

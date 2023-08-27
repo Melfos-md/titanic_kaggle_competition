@@ -1,3 +1,6 @@
+# TODO:
+# - mettre un seuil de prediction ? il doit y avoir un lien avec from_logits
+# Du coup je suis pas trop sûr de ce qui se passe en matière de prédiction là... puisque je prédis des probabilités
 #%%
 from preprocessing import preprocess_model
 import numpy as np

@@ -62,3 +62,5 @@ Simple logistic regression
 
 
 File: doc/model_1.0/model_1.0.tf
+
+Submission 2023-27-08: 0.75837 rank 11624
