@@ -17,15 +17,50 @@ from typing import Tuple, List, Dict
 # Split features and labels
 # Handle missing values
 # Argument:
-# - col: dict, {column_name:[]}
+# - path: string to csv
+# - live: if True path must be csv for kaggle submission, else pass data to train
+# - nrows: number of rows to read in csv, for unit testing
 # all columns: ['PassengerId', 'Survived', 'Pclass', 'Name', 'Sex', 'Age', 'SibSp', 'Parch', 'Ticket', 'Fare', 'Cabin', 'Embarked']
-def load_and_prepare_data():
-    usecols = ['Survived', 'Pclass', 'Sex', 'Age', 'SibSp', 'Parch', 'Fare', 'Embarked']
-    titanic_features = pd.read_csv('data/train.csv', usecols=usecols)
+def load_and_prepare_data(path: str, live:bool=False, nrows:int=None) \
+        -> Tuple[pd.DataFrame, pd.DataFrame]:
+    usecols = [
+                'PassengerId', 'Survived', 'Pclass', 'Sex', 'Age', 
+                'SibSp', 'Parch', 'Fare', 'Embarked', 'Ticket', 'Cabin',
+                'Name'
+            ]
+    if live:
+        usecols.remove('Survived')
+    else:
+        usecols.remove('PassengerId')
+    titanic_features = pd.read_csv(path, usecols=usecols, nrows=nrows)
     titanic_features['Embarked'].fillna("Missing", inplace=True)  
     titanic_features['Pclass'] = titanic_features['Pclass'].astype(str)
-    titanic_labels = titanic_features.pop('Survived')
-    return titanic_features, titanic_labels
+    titanic_features['Cabin'] = titanic_features['Cabin'].fillna('Missing')
+    titanic_features['Ticket_prefix'] = extract_ticket_prefix(titanic_features['Ticket'])
+    titanic_features['Ticket_number_length'] = get_ticket_number_length(titanic_features['Ticket'])
+    titanic_features['title'] = extract_title(titanic_features['Name'])
+    titanic_features.drop(['Ticket', 'Name'], inplace=True, axis=1)
+    if live:
+        titanic_id = titanic_features.pop('PassengerId')
+        return titanic_features, titanic_id
+    else:
+        titanic_labels = titanic_features.pop('Survived')
+        return titanic_features, titanic_labels
+
+def extract_ticket_prefix(ticket: pd.Series):
+    return ticket.str.extract(r'([a-zA-Z]+)', expand=False)\
+                .fillna('Missing')
+
+def extract_ticket_number(ticket: pd.Series):
+    return ticket.str.extract(r'(\d+)$', expand=False).fillna('Missing')
+
+def get_ticket_number_length(ticket: pd.Series):
+    ticket_numbers = extract_ticket_number(ticket)
+    return ticket_numbers.apply(lambda x: 0 if x == 'Missing' else len(x))
+
+def extract_title(name: pd.Series) -> pd.Series:
+    # extract title from 'Name' feature
+    return name.str.extract(r' ([A-Za-z]+)\.', expand=False)
 
 # Instantiate keras tensors for each column.
 # Return dictionnary {name: KeraTensor} where
@@ -78,20 +113,24 @@ def preprocess_categorical_features(titanic_features: pd.DataFrame, inputs: Dict
             preprocessed_inputs.append(x)
     return preprocessed_inputs
 
-# Entry point of the module
-# Return inputs, preprocess_pipeline
-# - inputs: dict of symbolic tf.keras.Input objects matching the names and data-types of the columns
-# - preprocess_pipeline: keras model, see dot format in README.md
-# To generate dot format of preprocess_pipeline model:
-# ```
-# from preprocessing import preprocess_model
-# import tensorflow as tf
-# 
-# _,titanic_preprocessing, _, _ = preprocess_model()
-# tf.keras.utils.plot_model(model=titanic_preprocessing, to_file='preprocessing_pipeline.png', rankdir="LR", dpi=300, show_shapes=True)
-# ```
-def preprocess_model():
-    titanic_features, titanic_labels = load_and_prepare_data()
+"""
+ Entry point of the module
+ Return inputs, preprocess_pipeline, titanic_features, titanic_labels
+ - inputs: dict of symbolic tf.keras.Input objects matching the names and data-types of the columns
+ - preprocess_pipeline: keras model, see dot format in README.md
+ - titanic_features
+ - titanic_labels: labels if not live, PassengerId if live
+ To generate dot format of preprocess_pipeline model:
+ ```
+ from preprocessing import preprocess_model
+ import tensorflow as tf
+ 
+ _,titanic_preprocessing, _, _ = preprocess_model()
+ tf.keras.utils.plot_model(model=titanic_preprocessing, to_file='preprocessing_pipeline.png', rankdir="LR", dpi=300, show_shapes=True)
+ ```
+"""
+def preprocess_model(path: str, live:bool):
+    titanic_features, titanic_labels = load_and_prepare_data(path=path, live=live)
     inputs = instantiate_tensors(titanic_features)
 
     # concatenate tensor graph in a list

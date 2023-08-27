@@ -1,6 +1,3 @@
-# TODO:
-# - mettre un seuil de prediction ? il doit y avoir un lien avec from_logits
-# Du coup je suis pas trop sûr de ce qui se passe en matière de prédiction là... puisque je prédis des probabilités
 #%%
 from preprocessing import preprocess_model
 import numpy as np
@@ -18,12 +15,13 @@ def titanic_model(preprocessing_head, inputs):
     model = tf.keras.Model(inputs, result, name='simple_sigmoid_model')
     model.compile(loss=tf.keras.losses.BinaryCrossentropy(from_logits=False), 
                   optimizer=tf.keras.optimizers.Adam(learning_rate=0.01), 
-                  metrics=['accuracy', 'Precision', 'Recall'])
+                  metrics=['accuracy'])
     return model
 
-inputs,titanic_preprocessing, titanic_features, titanic_labels = preprocess_model()
+inputs,titanic_preprocessing, titanic_features, titanic_labels = preprocess_model('data/train.csv', live=False)
 model = titanic_model(titanic_preprocessing, inputs)
 
+#%%
 #model.summary()
 #tf.keras.utils.plot_model(model=model, rankdir="LR", dpi=72, show_shapes=True, to_file='simple_sigmoid_model.png')
 #with open('modelsummary.txt', 'w') as f:
