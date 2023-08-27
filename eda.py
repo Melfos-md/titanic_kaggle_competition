@@ -3,8 +3,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from preprocessing import get_ticket_number_length
-
-
 # %%
 data = pd.read_csv('data/train.csv')
 # %%
@@ -63,4 +61,9 @@ names_series = pd.Series([
 ])
 
 list(extract_title(names_series))
+# %%
+import tensorflow as tf
+from preprocessing import preprocess_model
+_, titanic_preprocessing, _, _ = preprocess_model('data/train.csv', live=False)
+tf.keras.utils.plot_model(model=titanic_preprocessing, to_file='preprocessing_pipeline.png', rankdir="LR", dpi=72, show_shapes=True)
 # %%

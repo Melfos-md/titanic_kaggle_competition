@@ -14,7 +14,7 @@ def titanic_model(preprocessing_head, inputs):
     result = body(preprocessed_inputs)
     model = tf.keras.Model(inputs, result, name='simple_sigmoid_model')
     model.compile(loss=tf.keras.losses.BinaryCrossentropy(from_logits=False), 
-                  optimizer=tf.keras.optimizers.Adam(learning_rate=0.01), 
+                  optimizer=tf.keras.optimizers.Adam(learning_rate=0.001), 
                   metrics=['accuracy'])
     return model
 
@@ -23,9 +23,10 @@ model = titanic_model(titanic_preprocessing, inputs)
 
 #%%
 #model.summary()
-#tf.keras.utils.plot_model(model=model, rankdir="LR", dpi=72, show_shapes=True, to_file='simple_sigmoid_model.png')
 #with open('modelsummary.txt', 'w') as f:
 #    model.summary(print_fn=lambda x: f.write(x + '\n'))
+
+#tf.keras.utils.plot_model(model=model, rankdir="LR", dpi=72, show_shapes=True)
 
 #%%
 # split 60-20-20: ici 80/20 et dans model.fit 75-25
@@ -34,7 +35,7 @@ titanic_train_features_dict = {name: np.array(value) for name, value in X_train.
 
 #%%
 history = model.fit(x=titanic_train_features_dict, y=y_train, 
-                    epochs=50, validation_split=0.25)
+                    epochs=100, validation_split=0.25)
 #%%
 from utils import plot_loss_metrics
 plot_loss_metrics(history, to_file=False)
@@ -47,5 +48,5 @@ print("results: ", results)
 
 
 #%%
-#model.save('doc/model_1.0/model_1.0.tf')
+#model.save('doc/1.1/1.1.tf')
 # %%

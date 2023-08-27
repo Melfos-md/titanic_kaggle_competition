@@ -37,7 +37,7 @@ def load_and_prepare_data(path: str, live:bool=False, nrows:int=None) \
     titanic_features['Pclass'] = titanic_features['Pclass'].astype(str)
     titanic_features['Cabin'] = titanic_features['Cabin'].fillna('Missing')
     titanic_features['Ticket_prefix'] = extract_ticket_prefix(titanic_features['Ticket'])
-    titanic_features['Ticket_number_length'] = get_ticket_number_length(titanic_features['Ticket'])
+    titanic_features['Ticket_number_length'] = get_ticket_number_length(titanic_features['Ticket']).astype(str)
     titanic_features['title'] = extract_title(titanic_features['Name'])
     titanic_features.drop(['Ticket', 'Name'], inplace=True, axis=1)
     if live:
@@ -107,7 +107,7 @@ def preprocess_categorical_features(titanic_features: pd.DataFrame, inputs: Dict
         if input.dtype != tf.float32:
             unique_values = np.unique(titanic_features[name].astype(str).fillna("Missing"))
             lookup = layers.StringLookup(vocabulary=unique_values)
-            one_hot = layers.CategoryEncoding(num_tokens=lookup.vocabulary_size())
+            one_hot = layers.CategoryEncoding(num_tokens=lookup.vocabulary_size(), output_mode='one_hot')
             x = lookup(input)
             x = one_hot(x)
             preprocessed_inputs.append(x)

@@ -4,8 +4,10 @@ A simple logistic regression.
 
 ## What's new
 - Include Cabin, replacing NaN by 'Missing' str
-- Include Ticket as is
+- Include Ticket number length and prefix (separate features)*
+- Include title from Name feature
 - Accuracy threshold stick to 0.5; since for that problem we don't need to penalize 0 or 1.
+- Changed CategoryEncoding from multi-hot to one-hot
 
 ## Data preprocessing
 (preprocessing module)
@@ -48,26 +50,26 @@ Simple logistic regression
 
 
 **Hyperparameters**
-- learning_rate: 0.01
-- epoch: 50
+- learning_rate: 0.001
+- epoch: 100
 
 
 **Results**
 
 |          | Train  | Dev    | Test   |
 |----------|--------|--------|--------|
-| Loss     | 0.4676 | 0.4277 | 0.4676 |
-| Accuracy | 0.7921 | 0.8202 | 0.7765 |
+| Loss     | 0.4031 | 0.4032 | 0.4459 |
+| Accuracy | 0.8352 | 0.8090 | 0.7932 |
 
 
 <table>
   <tr>
-    <td> <img src="" alt="Image 1" style="width: 250px;"/> </td>
-    <td> <img src="" alt="Image 2" style="width: 250px;"/> </td>
+    <td> <img src="loss.png" alt="Image 1" style="width: 250px;"/> </td>
+    <td> <img src="accuracy.png" alt="Image 2" style="width: 250px;"/> </td>
   </tr>
 </table>
 
 
 File: doc/model_1.0/model_1.0.tf
 
-Submission 2023-27-08: 0.75837 rank 11624
+Submission 2023-27-08: 0.79186 rank 853

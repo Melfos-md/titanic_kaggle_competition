@@ -13,3 +13,5 @@ Each tag is a model.
 ## Models
 - v1.0: simple logistic regression with few preprocessing.
   - Kaggle submission: 0.75837
+- v1.1: some feature engineering
+  - Kaggle submission: 0.79186
